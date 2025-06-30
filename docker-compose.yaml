@@ -2,6 +2,7 @@ version: '3.7'
 
 services:
   # Portainer (Web interface for container management)
+  portainer:
     image: portainer/portainer-ce:latest
     container_name: portainer
     restart: unless-stopped
@@ -108,7 +109,7 @@ services:
   #   networks:
   #     - traefik_network
 
-  #Homepage (Página inicial com resumo dos containers)
+  #Homepage (Página inicial com resumo dos containers
   homepage: 
     image: ghcr.io/gethomepage/homepage:latest
     container_name: homepage

@@ -1,0 +1,135 @@
+version: '3.7'
+
+services:
+  # Portainer (Web interface for container management)
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    restart: unless-stopped
+    ports:
+      - "9000:9000"                                     # Portainer interface port
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"     # Necessary to manage containers
+      - ./docker/portainer:/data
+    networks:
+      - traefik_network
+
+  # Jellyfin (Media Server)
+  jellyfin:
+    image: jellyfin/jellyfin:latest
+    container_name: jellyfin
+    restart: unless-stopped
+    ports:
+      - "8096:8096"                                     # Jellifin interface port
+    environment:
+      - JELLYFIN_CACHE_DIR=/var/cache/jellyfin
+      # - JELLYFIN_CONFIG_DIR=/etc/jellyfin
+      - JELLYFIN_DATA_DIR=/var/lib/jellyfin
+      - JELLYFIN_LOG_DIR=/var/log/jellyfin
+      - TZ=America/Fortaleza                            # Defined Fortaleza timezone
+    volumes:
+      - "/mnt/dados:/mnt/dados"                         # Mapping the host volume to the container
+      - ./docker/jellyfin/etc:/etc/jellyfin             # /etc/jellyfin
+      - ./docker/jellyfin/cache:/var/cache/jellyfin     # /var/cache/jellyfin
+      - ./docker/jellyfin:/config                       # /jellyfin/config
+      - ./docker/jellyfin/cache:/cache                  # /var/cache/jellyfin
+      - ./docker/jellyfin/lib:/var/lib/jellyfin         # /var/lib/jellyfin
+      - ./docker/jellyfin/log:/var/log/jellyfin         # /var/log/jellyfin
+    networks:
+      - traefik_network
+
+  # # Radarr (Filmes) - não configurado o indexer
+  # radarr:
+  #   image: lscr.io/linuxserver/radarr:latest
+  #   container_name: radarr
+  #   environment:
+  #     - PUID=1000
+  #     - PGID=1000
+  #     - TZ=America/Fortaleza                            # Defined Fortaleza timezone
+  #   volumes:
+  #     - ./docker/radarr:/config
+  #     - "/mnt/dados:/mnt/dados"                         # Mapping the host volume to the container
+  #   ports:
+  #     - 7878:7878
+  #   restart: unless-stopped
+  #   networks:
+  #     - traefik_network
+
+  #Qbittorrent (Torrent)
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    environment:
+      - PUID=1000
+      - PGID=1000
+      # - TZ=Etc/UTC
+      - TZ=America/Fortaleza                            # Defined Fortaleza timezone
+      - WEBUI_PORT=8080
+      - TORRENTING_PORT=6881
+    volumes:
+      # - /path/to/qbittorrent/appdata:/config
+      - ./docker:/config                                #~/docker/qbittorrent
+      - "/mnt/dados:/mnt/dados"                         # Mapping the host volume to the container
+    ports:
+      - 8080:8080
+      - 6881:6881
+      - 6881:6881/udp
+    restart: unless-stopped
+    networks:
+      - traefik_network
+  
+  # # Prowlarr (indexer) - não configurado
+  # prowlarr:
+  #   image: ghcr.io/hotio/prowlarr:latest
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - flaresolverr
+  #   environment:
+  #     # - TZ=America/Sao_Paulo
+  #     - TZ=America/Fortaleza                            # Defined Fortaleza timezone
+  #     - PUID=1000
+  #     - PGID=1000
+  #   volumes:
+  #     # - /home/akitaonrails/prowlarr/config:/config
+  #     - ./docker/prowlarr:/config
+  #   ports:
+  #     - '9696:9696'
+  #   networks:
+  #     - traefik_network
+
+  # #Flare resolver (revolve captcha) - não configurado
+  # flaresolverr:
+  #   image: ghcr.io/flaresolverr/flaresolverr:latest
+  #   restart: unless-stopped
+  #   volumes:
+  #     # - /home/akitaonrails/flaresolverr/config:/config
+  #     - ./docker/flaresolverr:/config
+  #   ports:
+  #     - '8191:8191'
+  #   networks:
+  #     - traefik_network
+
+  #Homepage (Página inicial com resumo dos containers)
+  homepage: 
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: homepage
+    environment:
+      #HOMEPAGE_ALLOWED_HOSTS: gethomepage.dev # required, may need port. See gethomepage.dev/installation/#homepage_allowed_hosts
+      - HOMEPAGE_ALLOWED_HOSTS=* # required, may need port. See gethomepage.dev/installation/#homepage_allowed_hosts
+      - PUID=1000 # optional, your user id
+      - PGID=1000 # optional, your group id
+      - TZ=America/Fortaleza                            # Defined Fortaleza timezone
+    ports:
+      - 3000:3000
+    volumes:
+      - ./docker/homepage:/app/config
+      - /var/run/docker.sock:/var/run/docker.sock:ro    # optional, for docker integrations
+      - "/mnt/dados:/mnt/dados"                         # Mapping the host volume to the container
+    restart: unless-stopped
+    networks:
+      - traefik_network
+
+
+networks:
+  traefik_network:
+    driver: bridge
+

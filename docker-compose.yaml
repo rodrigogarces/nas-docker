@@ -120,11 +120,25 @@ services:
       - PGID=1000 # optional, your group id
       - TZ=America/Fortaleza                            # Defined Fortaleza timezone
     ports:
-      - 3000:3000
+      - 80:3000
     volumes:
       - ./docker/homepage:/app/config
       - /var/run/docker.sock:/var/run/docker.sock:ro    # optional, for docker integrations
       - "/mnt/dados:/mnt/dados"                         # Mapping the host volume to the container
+    restart: unless-stopped
+    networks:
+      - traefik_network
+
+  #Open speedtest to measure lan speed
+  speedtest:
+    image: openspeedtest/latest
+    container_name: openspeedtest
+    environment:
+      - TZ=America/Fortaleza                            # Defined Fortaleza timezone
+    ports:
+        - '3000:3000'
+        - '3001:3001'
+    
     restart: unless-stopped
     networks:
       - traefik_network

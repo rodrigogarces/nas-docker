@@ -109,7 +109,7 @@ services:
   #   networks:
   #     - traefik_network
 
-  #Homepage (Página inicial com resumo dos containers
+  #Homepage (Start page with containers stats)
   homepage: 
     image: ghcr.io/gethomepage/homepage:latest
     container_name: homepage

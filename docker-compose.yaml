@@ -146,5 +146,6 @@ services:
 
 networks:
   traefik_network:
+    name: traefik_network
     driver: bridge
 

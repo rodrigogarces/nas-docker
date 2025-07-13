@@ -21,6 +21,7 @@ services:
     restart: unless-stopped
     ports:
       - "8096:8096"                                     # Jellifin interface port
+      - "7359:7359/udp"                                 # Autodiscover port
     environment:
       - JELLYFIN_CACHE_DIR=/var/cache/jellyfin
       # - JELLYFIN_CONFIG_DIR=/etc/jellyfin

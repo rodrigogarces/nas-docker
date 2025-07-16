@@ -311,7 +311,7 @@ sudo nano /usr/local/bin/snapraid_sync.sh
 ```
 
 ```bash
-!/bin/bash
+#!/bin/bash
 
 echo "[INFO] $(date) - Collecting active containers..."
 ACTIVE_CONTAINERS=$(docker ps -q)
@@ -368,7 +368,7 @@ sudo nano /usr/local/bin/snapraid_scrub.sh
 ```
 
 ```bash
-!/bin/bash
+#!/bin/bash
 
 # Coverage parameter (default: 25% of files)
 SCRUB_PERCENT=25

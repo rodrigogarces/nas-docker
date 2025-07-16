@@ -198,7 +198,7 @@ sudo mkdir -p /mnt/dados500wd
 ```bash
 #Individual disks
 UUID=0c2ee9ed-8beb-480c-b9c7-78793549e99a /mnt/dados1000wd ext4 defaults,nofail,noatime 0 2 #boot even if volume is unavailable"
-UUID=4af966dd-2a68-4b7f-981c-a6c98d28836c /mnt/dados100st ext4 defaults,nofail,noatime 0 2 #boot even if volume is unavailable"
+UUID=4af966dd-2a68-4b7f-981c-a6c98d28836c /mnt/dados1000st ext4 defaults,nofail,noatime 0 2 #boot even if volume is unavailable"
 UUID=239bab2a-450f-482a-84b8-f5af3cd29eb8 /mnt/dados500wd ext4 defaults,nofail,noatime 0 2 #boot even if volume is unavailable"
 ```
 

@@ -353,9 +353,15 @@ Runs sync daily at 3am
 
 #### Schedule scrub with cron
 Weekly Scrub on Sundays 4am, checks 25% of files
+
+Schedule on cron
 ```bash
-0 4 * * 0 /usr/bin/snapraid scrub -p 25 > /var/log/snapraid-scrub.log 2>&1
+sudo crontab -e
 ```
+```bash
+4 0 * * 0 /usr/bin/snapraid scrub -p 25 > /var/log/snapraid-scrub.log 2>&1
+```
+Save
 
 ```bash
 sudo nano /usr/local/bin/snapraid_scrub.sh

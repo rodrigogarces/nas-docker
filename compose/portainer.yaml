@@ -1,0 +1,28 @@
+version: '3.7'
+
+services:
+  # Portainer (Web interface for container management)
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    environment:
+      - TZ=America/Fortaleza                            # Defined Fortaleza timezone
+    restart: unless-stopped
+    ports:
+      - "9000:9000"                                     # Portainer interface port
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"     # Necessary to manage containers
+      - ./docker/portainer:/data
+    networks:
+      - media_network
+
+
+networks:
+  media_network:
+    name: media_network
+    driver: bridge
+
+  ha_network:
+    name: ha_network
+    driver: bridge
+

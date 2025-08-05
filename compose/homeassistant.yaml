@@ -1,0 +1,40 @@
+version: '3.7'
+
+services:
+  #Home assistant (open smart home)
+  homeassistant:
+    image: ghcr.io/home-assistant/home-assistant:stable
+    container_name: homeassistant
+    ports:
+      - '8123:8123'
+    volumes:
+      - ./docker/homeassistant:/config
+      - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
+    networks:
+      - home_assistant
+
+  #Mosquitto (mqtt broker)
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: mosquitto
+    environment:
+      - TZ=America/Fortaleza                            # Defined Fortaleza timezone
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./docker/mosquitto/config:/mosquitto/config
+      - ./docker/mosquitto/data:/mosquitto/data
+      - ./docker/mosquitto/log:/mosquitto/log
+    restart: unless-stopped
+    networks:
+      - home_assistant
+
+
+# Defined on portainer yaml
+# networks:
+#   ha_network:
+#     name: ha_network
+#     driver: bridge
+

@@ -1,19 +1,6 @@
 version: '3.7'
 
 services:
-  # Portainer (Web interface for container management)
-  portainer:
-    image: portainer/portainer-ce:latest
-    container_name: portainer
-    restart: unless-stopped
-    ports:
-      - "9000:9000"                                     # Portainer interface port
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock"     # Necessary to manage containers
-      - ./docker/portainer:/data
-    networks:
-      - traefik_network
-
   # Jellyfin (Media Server)
   jellyfin:
     image: jellyfin/jellyfin:latest
@@ -37,9 +24,9 @@ services:
       - ./docker/jellyfin/lib:/var/lib/jellyfin         # /var/lib/jellyfin
       - ./docker/jellyfin/log:/var/log/jellyfin         # /var/log/jellyfin
     networks:
-      - traefik_network
+      - media_network
 
-  # # Radarr (Filmes) - não configurado o indexer
+  # # Radarr (Films) - not configured indexer
   # radarr:
   #   image: lscr.io/linuxserver/radarr:latest
   #   container_name: radarr
@@ -54,7 +41,7 @@ services:
   #     - 7878:7878
   #   restart: unless-stopped
   #   networks:
-  #     - traefik_network
+  #     - media_network
 
   #Qbittorrent (Torrent)
   qbittorrent:
@@ -77,9 +64,9 @@ services:
       - 6881:6881/udp
     restart: unless-stopped
     networks:
-      - traefik_network
+      - media_network
   
-  # # Prowlarr (indexer) - não configurado
+  # # Prowlarr (indexer) - not configured
   # prowlarr:
   #   image: ghcr.io/hotio/prowlarr:latest
   #   restart: unless-stopped
@@ -96,9 +83,9 @@ services:
   #   ports:
   #     - '9696:9696'
   #   networks:
-  #     - traefik_network
+  #     - media_network
 
-  # #Flare resolver (revolve captcha) - não configurado
+  # #Flare resolver (solve captcha) - not configured
   # flaresolverr:
   #   image: ghcr.io/flaresolverr/flaresolverr:latest
   #   restart: unless-stopped
@@ -108,7 +95,7 @@ services:
   #   ports:
   #     - '8191:8191'
   #   networks:
-  #     - traefik_network
+  #     - media_network
 
   #Homepage (Start page with containers stats)
   homepage: 
@@ -128,7 +115,7 @@ services:
       - "/mnt/dados:/mnt/dados"                         # Mapping the host volume to the container
     restart: unless-stopped
     networks:
-      - traefik_network
+      - media_network
 
   #Open speedtest to measure lan speed
   speedtest:
@@ -142,11 +129,12 @@ services:
     
     restart: unless-stopped
     networks:
-      - traefik_network
+      - media_network
 
 
-networks:
-  traefik_network:
-    name: traefik_network
-    driver: bridge
+# Defined on portainer yaml
+# networks:
+#   media_network:
+#     name: media_network
+#     driver: bridge
 

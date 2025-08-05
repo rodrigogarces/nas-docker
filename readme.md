@@ -446,11 +446,17 @@ docker compose --version
 ```
 
 ### Configure docker containers
-Enter the folder containing the docker compose file ([docker-compose.yaml](docker-compose.yaml))
+Enter the folder containing the docker compose files ([compose](compose))
 
-Run the command below to start the containers
+Run the command below to start the container stack you want to activate (portainer NEED to be the first because it contains all networks).
 ```bash
-docker compose up
+docker compose -f <file> -p <stack name> up -d
+``` 
+```bash
+cd compose
+docker compose -f portainer.yaml -p portainer up -d
+docker compose -f media.yaml -p media up -d
+docker compose -f homeassistant.yaml -p homeassistant up -d
 ``` 
 
 ---

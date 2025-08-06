@@ -75,24 +75,81 @@ btop
 ---
 
 ## Add HDD parameters to enable sleep when inactive (if necessary)
-If any HDD don't go to sleep automatically when inactive for a time, check if APM and Spindown are active on disk
+### Create the sdc standby
+```bash
+sudo nano /etc/systemd/system/hdparm-disks.service
+```
+```bash
+[Unit]
+Description=Set hdparm settings for /dev/sdc
+After=local-fs.target
 
-```bash
-sudo hdparm -BC /dev/sdx
+[Service]
+Type=oneshot
+ExecStart=/bin/bash -c "\
+    /usr/sbin/hdparm -B 128 -S 120 /dev/sdc && \
+"
+
+[Install]
+WantedBy=multi-user.target
 ```
 
-If not, activate on hdparm
+#### Enable at boot
 ```bash
-sudo nano /etc/hdparm.conf
+sudo systemctl daemon-reload
+sudo systemctl enable --now hdparm-disks.service
+```
+
+#### Check status
+```bash
+systemctl status hdparm-disks.service
+```
+
+You should see
+```bash
+Active: inactive (dead) since ...
+Process: ... ExecStart=... (code=exited, status=0/SUCCESS)
+```
+
+### Create the /dev/sdb standby (internal sata)
+```bash
+sudo nano /etc/systemd/system/hdparm-standby-sdb.service
 ```
 ```bash
-/dev/sdx {
-    # apm = 128 #if not set automatically
-    spindown_time = 120 #10 minutes
-}
+[Unit]
+Description=Put /dev/sdb into standby
+After=local-fs.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/hdparm -y /dev/sdb
+```
+
+#### Create the timer
+```bash
+sudo nano /etc/systemd/system/hdparm-standby-sdb.timer
 ```
 ```bash
-sudo systemctl restart hdparm
+[Unit]
+Description=Run hdparm standby for /dev/sdb after 10 minutes of boot
+
+[Timer]
+OnBootSec=10min
+Unit=hdparm-standby-sdb.service
+
+[Install]
+WantedBy=timers.target
+```
+
+#### Enable and start
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable --now hdparm-standby-sdb.timer
+```
+
+#### Check if scheduled
+```bash
+systemctl list-timers | grep hdparm
 ```
 
 ---
@@ -334,6 +391,10 @@ else
 fi
 
 echo "[INFO] Process completed in $(date)"
+
+#use only if you need to manually need to put the parity drive to sleep (adjust /dev/sdx accordly)
+sudo hdparm -y /dev/sdb
+echo "Force /dev/sdb (internal sata) to sleep"
 ```
 
 Make the script executable
@@ -385,6 +446,10 @@ else
 fi
 
 echo "[INFO] Process completed in $(date)"
+
+#use only if you need to manually need to put the parity drive to sleep (adjust /dev/sdx accordly)
+sudo hdparm -y /dev/sdb
+echo "Force /dev/sdb (internal sata) to sleep"
 ```
 
 Make it executable

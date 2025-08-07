@@ -370,31 +370,44 @@ sudo nano /usr/local/bin/snapraid_sync.sh
 ```bash
 #!/bin/bash
 
+e#!/bin/bash
+
 echo "[INFO] $(date) - Collecting active containers..."
 ACTIVE_CONTAINERS=$(docker ps -q)
 
 if [ -z "$ACTIVE_CONTAINERS" ]; then
     echo "[INFO] No containers running. Moving on..."
 else
-    echo "[INFO] Stopping containers: : $ACTIVE_CONTAINERS"
-    docker stop $ACTIVE_CONTAINERS
+    echo "[INFO] Stopping containers..."
+    for id in $ACTIVE_CONTAINERS; do
+        name=$(docker inspect --format='{{.Name}}' "$id" | cut -c2-)
+        echo "[INFO] Stopping container: $name ($id)"
+        docker stop "$id" > /dev/null
+    done
 fi
 
-echo "[INFO] Starting snapraid sync..."
+echo -e "\n\n[INFO] Starting snapraid sync..."
 /usr/bin/snapraid sync
 
+echo -e "\n\n"
 if [ -z "$ACTIVE_CONTAINERS" ]; then
     echo "[INFO] No containers to restart."
 else
-    echo "[INFO] Restarting containers: $ACTIVE_CONTAINERS"
-    docker start $ACTIVE_CONTAINERS
+    echo -e "[INFO] Restarting containers..."
+    for id in $ACTIVE_CONTAINERS; do
+        name=$(docker inspect --format='{{.Name}}' "$id" | cut -c2-)
+        echo "[INFO] Starting container: $name ($id)"
+        docker start "$id" > /dev/null
+    done
 fi
 
-echo "[INFO] Process completed in $(date)"
-
-#use only if you need to manually need to put the parity drive to sleep (adjust /dev/sdx accordly)
+echo -e "\n\n[INFO] Waiting 1 minute before putting /dev/sdb to sleep..."
+sleep 60
 sudo hdparm -y /dev/sdb
-echo "Force /dev/sdb (internal sata) to sleep"
+echo "[INFO] Forced /dev/sdb (internal SATA) to sleep"
+
+echo "[INFO] Process completed at $(date)"
+
 ```
 
 Make the script executable
@@ -431,25 +444,35 @@ ACTIVE_CONTAINERS=$(docker ps -q)
 if [ -z "$ACTIVE_CONTAINERS" ]; then
     echo "[INFO] No containers running. Continuing..."
 else
-    echo "[INFO] Stopping containers: $ACTIVE_CONTAINERS"
-    docker stop $ACTIVE_CONTAINERS
+    echo "[INFO] Stopping containers..."
+    for id in $ACTIVE_CONTAINERS; do
+        name=$(docker inspect --format='{{.Name}}' "$id" | cut -c2-)
+        echo "[INFO] Stopping container: $name ($id)"
+        docker stop "$id" > /dev/null
+    done
 fi
 
-echo "[INFO] Startting snapraid scrub -p $SCRUB_PERCENT ..."
+echo -e "\n\n[INFO] Starting snapraid scrub -p $SCRUB_PERCENT ..."
 /usr/bin/snapraid scrub -p $SCRUB_PERCENT
 
+echo -e "\n\n"
 if [ -z "$ACTIVE_CONTAINERS" ]; then
     echo "[INFO] No containers to restart."
 else
-    echo "[INFO] Restarting containers: $ACTIVE_CONTAINERS"
-    docker start $ACTIVE_CONTAINERS
+    echo "[INFO] Restarting containers..."
+    for id in $ACTIVE_CONTAINERS; do
+        name=$(docker inspect --format='{{.Name}}' "$id" | cut -c2-)
+        echo "[INFO] Starting container: $name ($id)"
+        docker start "$id" > /dev/null
+    done
 fi
 
-echo "[INFO] Process completed in $(date)"
-
-#use only if you need to manually need to put the parity drive to sleep (adjust /dev/sdx accordly)
+echo "[INFO] Waiting 1 minute before putting /dev/sdb to sleep..."
+sleep 60
 sudo hdparm -y /dev/sdb
-echo "Force /dev/sdb (internal sata) to sleep"
+echo "[INFO] Forced /dev/sdb (internal SATA) to sleep"
+
+echo "[INFO] Process completed at $(date)"
 ```
 
 Make it executable

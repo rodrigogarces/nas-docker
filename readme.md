@@ -328,7 +328,7 @@ sudo nano /usr/local/bin/snapraid_sync.sh
 ```bash
 #!/bin/bash
 
-e#!/bin/bash
+#!/bin/bash
 
 echo "[INFO] $(date) - Collecting active containers..."
 ACTIVE_CONTAINERS=$(docker ps -q)
@@ -359,10 +359,10 @@ else
     done
 fi
 
-echo -e "\n\n[INFO] Waiting 1 minute before putting /dev/sdb to sleep..."
-sleep 60
-sudo hdparm -y /dev/sdb
-echo "[INFO] Forced /dev/sdb (internal SATA) to sleep"
+# echo -e "\n\n[INFO] Waiting 1 minute before putting /dev/sdb to sleep..."
+# sleep 60
+# sudo hdparm -y /dev/sdb
+# echo "[INFO] Forced /dev/sdb (internal SATA) to sleep"
 
 echo "[INFO] Process completed at $(date)"
 
@@ -425,10 +425,10 @@ else
     done
 fi
 
-echo "[INFO] Waiting 1 minute before putting /dev/sdb to sleep..."
-sleep 60
-sudo hdparm -y /dev/sdb
-echo "[INFO] Forced /dev/sdb (internal SATA) to sleep"
+# echo "[INFO] Waiting 1 minute before putting /dev/sdb to sleep..."
+# sleep 60
+# sudo hdparm -y /dev/sdb
+# echo "[INFO] Forced /dev/sdb (internal SATA) to sleep"
 
 echo "[INFO] Process completed at $(date)"
 ```

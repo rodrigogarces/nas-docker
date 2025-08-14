@@ -81,14 +81,13 @@ sudo nano /etc/systemd/system/hdparm-disks.service
 ```
 ```bash
 [Unit]
-Description=Set hdparm settings for /dev/sdc
+Description=Set hdparm settings for /dev/sdb and /dev/sdd
 After=local-fs.target
 
 [Service]
 Type=oneshot
-ExecStart=/bin/bash -c "\
-    /usr/sbin/hdparm -B 128 -S 120 /dev/sdc && \
-"
+ExecStart=/usr/sbin/hdparm -B 128 -S 120 /dev/sdb
+ExecStart=/usr/sbin/hdparm -B 128 -S 120 /dev/sdd
 
 [Install]
 WantedBy=multi-user.target
@@ -109,47 +108,6 @@ You should see
 ```bash
 Active: inactive (dead) since ...
 Process: ... ExecStart=... (code=exited, status=0/SUCCESS)
-```
-
-### Create the /dev/sdb standby (internal sata)
-```bash
-sudo nano /etc/systemd/system/hdparm-standby-sdb.service
-```
-```bash
-[Unit]
-Description=Put /dev/sdb into standby
-After=local-fs.target
-
-[Service]
-Type=oneshot
-ExecStart=/usr/sbin/hdparm -y /dev/sdb
-```
-
-#### Create the timer
-```bash
-sudo nano /etc/systemd/system/hdparm-standby-sdb.timer
-```
-```bash
-[Unit]
-Description=Run hdparm standby for /dev/sdb after 10 minutes of boot
-
-[Timer]
-OnBootSec=10min
-Unit=hdparm-standby-sdb.service
-
-[Install]
-WantedBy=timers.target
-```
-
-#### Enable and start
-```bash
-sudo systemctl daemon-reload
-sudo systemctl enable --now hdparm-standby-sdb.timer
-```
-
-#### Check if scheduled
-```bash
-systemctl list-timers | grep hdparm
 ```
 
 ---

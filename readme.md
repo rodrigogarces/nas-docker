@@ -13,6 +13,11 @@ sudo apt update
 sudo apt upgrade -y
 ```
 
+## Configure timezone
+```bash
+sudo dpkg-reconfigure tzdata
+ ```
+
 ## Install btop for system monitoring
 ```bash
 sudo apt install btop -y

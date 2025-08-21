@@ -80,19 +80,40 @@ btop
 ---
 
 ## Add HDD parameters to enable sleep when inactive (if necessary)
-### Create the sdc standby
+### Get physical disk path and mountpoint
+```bash
+ls -l /dev/disk/by-id/ \
+  | grep -E 'ata-|usb-' \
+  | grep -v -- '-part' \
+  | while read -r line; do
+      BYID=$(echo "$line" | awk '{print $9}')
+      DEV=$(echo "$line" | awk '{print $11}' | sed 's#\.\./\.\./##')
+      MODEL=$(lsblk -ndo MODEL "/dev/$(basename "$DEV")")
+      printf "%s -> %s [%s]\n" "$BYID" "$DEV" "$MODEL"
+    done
+```
+
+Get the disk ID of the disk you need, is something like `ata-WDC_WD5000LPVX-00V0TT0....`
+
+Test beforehand if the disk is correct with the comand below:
+```bash
+sudo hdparm -BC /dev/disk/by-id/<disk id>
+```
+If its the correct disk, then proceed.
+
+### Create the usb disk standby script
 ```bash
 sudo nano /etc/systemd/system/hdparm-disks.service
 ```
 ```bash
 [Unit]
-Description=Set hdparm settings for /dev/sdb and /dev/sdd
+Description=Set hdparm settings for usb discs
 After=local-fs.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/sbin/hdparm -B 128 -S 120 /dev/sdb
-ExecStart=/usr/sbin/hdparm -B 128 -S 120 /dev/sdd
+ExecStart=/usr/sbin/hdparm -B 128 -S 120 /dev/disk/by-id/usb-damy_USB_3.0_Destop_H_00000000000000000000-0:0
+ExecStart=/usr/sbin/hdparm -B 128 -S 120 /dev/disk/by-id/usb-ASMT_USB_3.0_Destop_H_0000000000AB-0:0
 
 [Install]
 WantedBy=multi-user.target

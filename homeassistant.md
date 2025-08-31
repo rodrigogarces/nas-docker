@@ -50,12 +50,13 @@ This command ensure correct permissions to edit `passwords`file, add the desired
 ### Install HACS
 Install with this simgle command on a regular terminal
 ```bash
-docker exec -it homeassistant sh -C "wget -O - https://get.hacs.xyz | bash -"
+docker exec -it homeassistant sh -c "wget -O - https://get.hacs.xyz | bash -"
 ```
 
 Restart homeassistant container to ensure that all modifications are applied.
 ```bash
-docker restart homeassistant
+docker stop homeassistant
+docker start homeassistant
 ```
 Go again to Configurations -> Devices and services -> add integrations. Hit <kbd>Ctrl</kbd> + <kbd>F5</kbd> to force reload without cache. This step is nedded to update integrations list and show HACS.
 

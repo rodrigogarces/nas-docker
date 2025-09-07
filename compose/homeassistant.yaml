@@ -1,4 +1,7 @@
-version: '3.7'
+# docker compose -f homeassistant.yaml -p homeassistant up -d
+# docker compose -f homeassistant.yaml -p homeassistant down
+
+# version: '3.7'
 
 services:
   #Home assistant (open smart home)
@@ -8,7 +11,7 @@ services:
     ports:
       - '8123:8123'
     volumes:
-      - ./docker/homeassistant:/config
+      - ../docker/homeassistant:/config
       - /etc/localtime:/etc/localtime:ro
     restart: unless-stopped
     networks:
@@ -24,17 +27,18 @@ services:
       - "1883:1883"
       - "9001:9001"
     volumes:
-      - ./docker/mosquitto/config:/mosquitto/config
-      - ./docker/mosquitto/data:/mosquitto/data
-      - ./docker/mosquitto/log:/mosquitto/log
+      - ../docker/mosquitto/config:/mosquitto/config
+      - ../docker/mosquitto/data:/mosquitto/data
+      - ../docker/mosquitto/log:/mosquitto/log
     restart: unless-stopped
     networks:
       - ha_network
 
 
 # Defined on portainer yaml
-# networks:
-#   ha_network:
-#     name: ha_network
-#     driver: bridge
+networks:
+  ha_network:
+    name: ha_network
+    driver: bridge
+    external: true
 

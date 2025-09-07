@@ -1,4 +1,7 @@
-version: '3.7'
+# docker compose -f portainer.yaml -p portainer up -d
+# docker compose -f portainer.yaml -p portainer down
+
+# version: '3.7'
 
 services:
   # Portainer (Web interface for container management)
@@ -12,7 +15,7 @@ services:
       - "9000:9000"                                     # Portainer interface port
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"     # Necessary to manage containers
-      - ./docker/portainer:/data
+      - ../docker/portainer:/data
     networks:
       - media_network
 

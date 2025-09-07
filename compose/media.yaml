@@ -1,4 +1,7 @@
-version: '3.7'
+# docker compose -f media.yaml -p media up -d
+# docker compose -f media.yaml -p media down
+
+# version: '3.7'
 
 services:
   # Jellyfin (Media Server)
@@ -17,12 +20,12 @@ services:
       - TZ=America/Fortaleza                            # Defined Fortaleza timezone
     volumes:
       - "/mnt/dados:/mnt/dados"                         # Mapping the host volume to the container
-      - ./docker/jellyfin/etc:/etc/jellyfin             # /etc/jellyfin
-      - ./docker/jellyfin/cache:/var/cache/jellyfin     # /var/cache/jellyfin
-      - ./docker/jellyfin:/config                       # /jellyfin/config
-      - ./docker/jellyfin/cache:/cache                  # /var/cache/jellyfin
-      - ./docker/jellyfin/lib:/var/lib/jellyfin         # /var/lib/jellyfin
-      - ./docker/jellyfin/log:/var/log/jellyfin         # /var/log/jellyfin
+      - ../docker/jellyfin/etc:/etc/jellyfin             # /etc/jellyfin
+      - ../docker/jellyfin/cache:/var/cache/jellyfin     # /var/cache/jellyfin
+      - ../docker/jellyfin:/config                       # /jellyfin/config
+      - ../docker/jellyfin/cache:/cache                  # /var/cache/jellyfin
+      - ../docker/jellyfin/lib:/var/lib/jellyfin         # /var/lib/jellyfin
+      - ../docker/jellyfin/log:/var/log/jellyfin         # /var/log/jellyfin
     networks:
       - media_network
 
@@ -56,7 +59,7 @@ services:
       - TORRENTING_PORT=6881
     volumes:
       # - /path/to/qbittorrent/appdata:/config
-      - ./docker:/config                                #~/docker/qbittorrent
+      - ../docker:/config                                #~/docker/qbittorrent
       - "/mnt/dados:/mnt/dados"                         # Mapping the host volume to the container
     ports:
       - 8080:8080
@@ -110,7 +113,7 @@ services:
     ports:
       - 80:3000
     volumes:
-      - ./docker/homepage:/app/config
+      - ../docker/homepage:/app/config
       - /var/run/docker.sock:/var/run/docker.sock:ro    # optional, for docker integrations
       - "/mnt/dados:/mnt/dados"                         # Mapping the host volume to the container
     restart: unless-stopped
@@ -123,6 +126,8 @@ services:
     container_name: openspeedtest
     environment:
       - TZ=America/Fortaleza                            # Defined Fortaleza timezone
+    volumes:
+      - ../docker/openspeedtest:/var/log/letsencrypt
     ports:
         - '3000:3000'
         - '3001:3001'
@@ -133,8 +138,9 @@ services:
 
 
 # Defined on portainer yaml
-# networks:
-#   media_network:
-#     name: media_network
-#     driver: bridge
+networks:
+  media_network:
+    name: media_network
+    driver: bridge
+    external: true
 

@@ -18,6 +18,7 @@ services:
       - ../docker/portainer:/data
     networks:
       - media_network
+      - ha_network
 
 
 networks:

@@ -357,7 +357,8 @@ sudo nano /usr/local/bin/snapraid_sync.sh
 #!/bin/bash
 
 echo "[INFO] $(date) - Collecting active containers..."
-ACTIVE_CONTAINERS=$(docker ps -q)
+# ACTIVE_CONTAINERS=$(docker ps -q)
+ACTIVE_CONTAINERS=$(docker compose -f /home/rodrigo/nas-docker/compose/media.yaml -p media ps -q)
 
 if [ -z "$ACTIVE_CONTAINERS" ]; then
     echo "[INFO] No containers running. Moving on..."
@@ -423,7 +424,8 @@ sudo nano /usr/local/bin/snapraid_scrub.sh
 SCRUB_PERCENT=25
 
 echo "[INFO] $(date) - Collecting active containers..."
-ACTIVE_CONTAINERS=$(docker ps -q)
+# ACTIVE_CONTAINERS=$(docker ps -q)
+ACTIVE_CONTAINERS=$(docker compose -f /home/rodrigo/nas-docker/compose/media.yaml -p media ps -q)
 
 if [ -z "$ACTIVE_CONTAINERS" ]; then
     echo "[INFO] No containers running. Continuing..."

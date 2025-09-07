@@ -12,7 +12,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
     restart: unless-stopped
     networks:
-      - home_assistant
+      - ha_network
 
   #Mosquitto (mqtt broker)
   mosquitto:
@@ -29,7 +29,7 @@ services:
       - ./docker/mosquitto/log:/mosquitto/log
     restart: unless-stopped
     networks:
-      - home_assistant
+      - ha_network
 
 
 # Defined on portainer yaml

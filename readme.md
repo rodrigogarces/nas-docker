@@ -555,5 +555,8 @@ sudo cp smb.conf /etc/samba/smb.conf
 ## Tailscale
 ```bash
 curl -fsSL https://tailscale.com/install.sh | sh
-sudo tailscale up
+sudo tailscale up --advertise-exit-node --accept-dns --advertise-routes=192.168.1.0/24
 ```
+`Advertise exit node` to add this machine as exit node (like a proxy) <br>
+`Accept dns` do redirect dns requests to internal lan dns <br>
+`Advertive routes` to acess local lan

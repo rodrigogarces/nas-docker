@@ -24,7 +24,7 @@ sudo apt install btop -y
 ```
 
 ---
-### Install local hostname resolver on network
+<!-- ### Install local hostname resolver on network
 ```bash
 sudo apt install avahi-daemon -y
 ```
@@ -47,7 +47,28 @@ Example configured with `nas` as hostname:
 ```bash
 127.0.0.1 localhost
 127.0.1.1 nas
+``` -->
+---
+### Disable resolved to prevent conflict with pihole dns container
+```bash
+sudo systemctl stop systemd-resolved
+sudo systemctl disable systemd-resolved
 ```
+```bash
+sudo rm -f /etc/resolv.conf
+sudo nano /etc/resolv.conf
+```
+
+```bash
+nameserver <pihole HOST ip>
+nameserver 8.8.8.8
+```
+
+And to prevent edition to file
+```bash
+sudo chattr +i /etc/resolv.conf
+```
+If nedded, revert with `-i` parameter.
 
 ---
 ## Increase swap size to 2gb to prevent memory shortage (optional)

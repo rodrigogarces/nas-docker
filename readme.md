@@ -493,7 +493,7 @@ sudo crontab -e
 ```
 
 ```bash
-4 0 * * 0 /usr/bin/snapraid scrub -p 25 > /var/log/snapraid-scrub.log 2>&1
+4 0 * * 0 /usr/bin/snapraid scrub -p 25 >> /var/log/snapraid-scrub.log 2>&1
 ```
 ---
 

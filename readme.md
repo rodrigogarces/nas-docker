@@ -479,7 +479,7 @@ fi
 # sudo hdparm -y /dev/sdb
 # echo "[INFO] Forced /dev/sdb (internal SATA) to sleep"
 
-echo "[INFO] Process completed at $(date)"
+echo "[INFO] Process completed at $(date)\n\n"
 ```
 
 Make it executable

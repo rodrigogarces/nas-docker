@@ -412,7 +412,7 @@ fi
 # sudo hdparm -y /dev/sdb
 # echo "[INFO] Forced /dev/sdb (internal SATA) to sleep"
 
-echo "[INFO] Process completed at $(date)"
+echo "[INFO] Process completed at $(date)\n\n"
 
 ```
 
@@ -580,4 +580,4 @@ sudo tailscale up --advertise-exit-node --accept-dns --advertise-routes=192.168.
 ```
 `Advertise exit node` to add this machine as exit node (like a proxy) <br>
 `Accept dns` do redirect dns requests to internal lan dns <br>
-`Advertive routes` to acess local lan
+`Advertise routes` to acess local lan

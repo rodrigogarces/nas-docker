@@ -375,8 +375,6 @@ sudo nano /usr/local/bin/snapraid_sync.sh
 ```bash
 #!/bin/bash
 
-#!/bin/bash
-
 echo "[INFO] $(date) - Collecting active containers..."
 # ACTIVE_CONTAINERS=$(docker ps -q)
 ACTIVE_CONTAINERS=$(docker compose -f /home/rodrigo/nas-docker/compose/media.yaml -p media ps -q)
@@ -494,6 +492,79 @@ sudo crontab -e
 
 ```bash
 4 0 * * 0 /usr/bin/snapraid scrub -p 25 >> /var/log/snapraid-scrub.log 2>&1
+```
+
+
+
+#### Schedule backup docker with cron
+Backup docker folder
+
+```bash
+sudo nano /usr/local/bin/backup-nas-docker.sh
+```
+
+```bash
+#!/bin/bash
+set -e
+
+NAS_DIR="/home/rodrigo/nas-docker"
+BACKUP_BASE="/mnt/dados/backup/docker"
+KEEP=4
+BACKUP_DIR="$BACKUP_BASE/docker_$(date +%Y%m%d)"
+
+echo "[INFO] $(date) - Starting NAS Docker backup..."
+mkdir -p "$BACKUP_DIR"
+
+# Detect active compose projects
+cd "$NAS_DIR"
+active_projects=$(docker ps --filter "label=com.docker.compose.project" --format "{{.Label \"com.docker.compose.project\"}}" | sort -u)
+
+echo "[INFO] $(date) - Active projects: $active_projects"
+
+# Stop only active projects
+for project in $active_projects; do
+    compose_file="$NAS_DIR/compose/$project.compose"
+    if [[ -f "$compose_file" ]]; then
+        echo "[INFO] $(date) - Stopping project $project..."
+        docker compose -f "$compose_file" -p "$project" down
+    else
+        echo "[INFO] $(date) - Compose file $compose_file not found, skipping..."
+    fi
+done
+
+# Perform backup preserving all attributes, permissions, and links
+echo "[INFO] $(date) - Copying $NAS_DIR to $BACKUP_DIR..."
+rsync -aHAXh --info=progress2 "$NAS_DIR/" "$BACKUP_DIR/"
+
+# Restart only previously active projects
+for project in $active_projects; do
+    compose_file="$NAS_DIR/compose/$project.compose"
+    if [[ -f "$compose_file" ]]; then
+        echo "[INFO] $(date) - Starting project $project..."
+        docker compose -f "$compose_file" -p "$project" up -d
+    fi
+done
+
+# Rotate old backups, keep only the last $KEEP
+echo "[INFO] $(date) - Cleaning up old backups, keeping the last $KEEP..."
+cd "$BACKUP_BASE"
+ls -1dt docker_* | tail -n +$((KEEP+1)) | xargs -r rm -rf
+
+echo "[INFO] Process completed at $(date)\n\n"
+```
+
+Make it executable
+```bash
+sudo chmod +x /usr/local/bin/backup-nas-docker.sh
+```
+
+Schedule in cron every Monday at 2am
+```bash
+sudo crontab -e
+```
+
+```bash
+0 2 * * 1 /usr/local/bin/backup-nas-docker.sh >> /var/log/backup-nas-docker.log 2>&1
 ```
 ---
 

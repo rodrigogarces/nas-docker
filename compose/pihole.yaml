@@ -7,7 +7,7 @@ services:
   #Pi hole (network wide dns)
   pihole:
     container_name: pihole
-    image: pihole/pihole:latest
+    image: pihole/pihole:6.1.4
     ports:
       # DNS Ports
       - "53:53/tcp"

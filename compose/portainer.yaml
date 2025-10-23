@@ -6,7 +6,7 @@
 services:
   # Portainer (Web interface for container management)
   portainer:
-    image: portainer/portainer-ce:latest
+    image: portainer/portainer-ce:2.27.9
     container_name: portainer
     environment:
       - TZ=America/Fortaleza                            # Defined Fortaleza timezone

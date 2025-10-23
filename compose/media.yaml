@@ -6,7 +6,7 @@
 services:
   # Jellyfin (Media Server)
   jellyfin:
-    image: jellyfin/jellyfin:latest
+    image: jellyfin/jellyfin:10.10.7
     container_name: jellyfin
     restart: unless-stopped
     ports:
@@ -48,7 +48,7 @@ services:
 
   #Qbittorrent (Torrent)
   qbittorrent:
-    image: lscr.io/linuxserver/qbittorrent:latest
+    image: lscr.io/linuxserver/qbittorrent:5.1.2
     container_name: qbittorrent
     environment:
       - PUID=1000
@@ -102,7 +102,7 @@ services:
 
   #Homepage (Start page with containers stats)
   homepage: 
-    image: ghcr.io/gethomepage/homepage:latest
+    image: ghcr.io/gethomepage/homepage:1.4.0
     container_name: homepage
     environment:
       #HOMEPAGE_ALLOWED_HOSTS: gethomepage.dev # required, may need port. See gethomepage.dev/installation/#homepage_allowed_hosts

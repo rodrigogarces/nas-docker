@@ -8,6 +8,7 @@ services:
   pihole:
     container_name: pihole
     image: pihole/pihole:6.1.4
+    hostname: nas
     ports:
       # DNS Ports
       - "53:53/tcp"

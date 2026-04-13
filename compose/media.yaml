@@ -102,7 +102,7 @@ services:
 
   #Homepage (Start page with containers stats)
   homepage: 
-    image: ghcr.io/gethomepage/homepage:1.4.0
+    image: ghcr.io/gethomepage/homepage:v1.4.0
     container_name: homepage
     environment:
       #HOMEPAGE_ALLOWED_HOSTS: gethomepage.dev # required, may need port. See gethomepage.dev/installation/#homepage_allowed_hosts

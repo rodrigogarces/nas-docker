@@ -1,0 +1,23 @@
+streams:
+  c1: # Camera name
+    - rtsp://[onvif user]:[onvif password]@[camera IP]:554/user=[onvif user]&password=[onvif password]&channel=0&stream=0.sdp?real_stream
+
+  # c1_low: # H264 transcode (if necessary)
+  #   - "ffmpeg:c1#video=h264#width=720#fps=10#audio=opus#hardware" # Not used on rpi due to absence of h265 hardware transcode
+  c2: # Camera name
+    - rtsp://[onvif user]:[onvif password]@[camera IP]:554/user=[onvif user]&password=[onvif password]t&channel=0&stream=0.sdp?real_stream
+
+  # c2_low: # H264 transcode (if necessary)
+  #   - "ffmpeg:c2#video=h264#width=720#fps=10#audio=opus#hardware" # Not used on rpi due to absence of h265 hardware transcode
+
+webrtc:
+  candidates:
+    - localhost:8555
+    - stun:8555         # Helps on network discovery
+
+api:
+  origin: "*"
+
+
+rtsp:
+  timeout: 30s  # Increase time to consider a connection dead

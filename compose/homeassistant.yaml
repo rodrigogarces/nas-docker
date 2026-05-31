@@ -4,10 +4,12 @@
 # version: '3.7'
 
 services:
-  #Home assistant (open smart home)
+  # Home assistant (open smart home)
   homeassistant:
-    image: ghcr.io/home-assistant/home-assistant:stable
+    image: ghcr.io/home-assistant/home-assistant:2026.5.4
     container_name: homeassistant
+    environment:
+      - TZ=America/Fortaleza                            # Defined Fortaleza timezone
     ports:
       - '8123:8123'
     volumes:
@@ -17,20 +19,60 @@ services:
     networks:
       - ha_network
 
-  #Mosquitto (mqtt broker)
+  # Mosquitto (mqtt broker)
   mosquitto:
     image: eclipse-mosquitto:2
     container_name: mosquitto
     environment:
       - TZ=America/Fortaleza                            # Defined Fortaleza timezone
     ports:
-      - "1883:1883"
-      - "9001:9001"
+      - "1883:1883" # plain mqtt (http)
+      - "9001:9001" # mqtt websocket (http)
     volumes:
       - ../docker/mosquitto/config:/mosquitto/config
       - ../docker/mosquitto/data:/mosquitto/data
       - ../docker/mosquitto/log:/mosquitto/log
     restart: unless-stopped
+    networks:
+      - ha_network
+
+  # Zigbee to mtqq bridge (use zigbee devices on home assistant using mqtt)
+  zigbee2mqtt:
+    image: koenkk/zigbee2mqtt:2.10.1
+    container_name: zigbee2mqtt
+    environment:
+      - TZ=America/Fortaleza                            # Defined Fortaleza timezone
+    restart: unless-stopped
+    volumes:
+      - ../docker/zigbee2mqtt:/app/data
+    devices:
+      # static usb "zigbee hub" mapping to "/dev/ttyUSB0" (don't change no matter what usb port you use)
+      - /dev/serial/by-id/usb-Silicon_Labs_CP2102_USB_to_UART_Bridge_Controller_0001-if00-port0:/dev/ttyUSB0
+    ports:
+      - 8080:8080 # web interface
+    networks:
+      - ha_network
+
+  # Go to rtc enable ip cameras to be used on home assistant
+  #  (A dedicated container is faster and less resource intensive
+  #   than home assistant integrated version)
+  go2rtc:
+    # image: alexxit/go2rtc:master-hardware # x86
+    image: alexxit/go2rtc:1.9.14 # rpi (arm)
+    container_name: go2rtc
+    environment:
+      - TZ=America/Fortaleza                            # Defined Fortaleza timezone
+    privileged: true         # only for FFmpeg hardware transcoding
+    restart: unless-stopped
+    volumes:
+      - ../docker/go2rtc/:/config/
+    devices:
+      - /dev/video10:/dev/video10 # Only used on rpi to h264 hardware transcode
+      - /dev/video11:/dev/video11 # Only used on rpi to h264 hardware transcode
+      - /dev/video12:/dev/video12 # Only used on rpi to h264 hardware transcode
+    ports:
+      - 1984:1984 # web interface
+      - 8554:8554
     networks:
       - ha_network
 
@@ -41,4 +83,3 @@ networks:
     name: ha_network
     driver: bridge
     external: true
-

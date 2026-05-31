@@ -1,0 +1,54 @@
+version: 5
+mqtt:
+  base_topic: zigbee2mqtt
+  server: mqtt://mosquitto:1883
+  user: [mosquitto user]
+  password: [mosquitto password]
+serial: # Zigbee USB coordinator config
+  port: /dev/ttyUSB0
+  adapter: zstack
+  baudrate: 115200
+  rtscts: false
+advanced:
+  channel: 25 # Zigbee channel
+  network_key: # Network criptographic key
+    - [0-255]
+    - [0-255]
+    - [0-255]
+    - [0-255]
+    - [0-255]
+    - [0-255]
+    - [0-255]
+    - [0-255]
+    - [0-255]
+    - [0-255]
+    - [0-255]
+    - [0-255]
+    - [0-255]
+    - [0-255]
+    - [0-255]
+    - [0-255]
+  pan_id: [0-65536] # Network ID
+  ext_pan_id: # NEtwork extended ID
+    - [0-255]
+    - [0-255]
+    - [0-255]
+    - [0-255]
+    - [0-255]
+    - [0-255]
+    - [0-255]
+    - [0-255]
+  transmit_power: 5 # DBm (zigbee coordinator)
+  last_seen: ISO_8601_local # Enablelast seen on interface
+  log_level: warning
+frontend:
+  enabled: true
+  port: 8080
+homeassistant:
+  enabled: true
+devices:
+  # added devices
+availability:
+  enabled: true
+  passive: # Timeout to passive sensors
+    timeout: 240 # Mins

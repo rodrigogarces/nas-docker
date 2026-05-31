@@ -1,0 +1,16 @@
+# docker compose -f docker-proxy.yaml -p docker-proxy up -d
+# docker compose -f docker-proxy.yaml -p docker-proxy down
+
+# version: '3.7'
+
+services:
+  docker-proxy:
+    image: ghcr.io/tecnativa/docker-socket-proxy:v0.4.2
+    container_name: docker-proxy
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - CONTAINERS=1
+    ports:
+      - 2375:2375
+    restart: unless-stopped

@@ -37,18 +37,18 @@ chown root:root mosquitto/config/passwords && \
 mosquitto_passwd -c /mosquitto/config/passwords mosquitto-ha && \
 chown 1883:1883 mosquitto/config/passwords" #prompts for password
 ```
-This command ensure correct permissions to edit `passwords`file, add the desired user and revert permissions to default to prevent permissions conflicts.
+This command ensure correct permissions to edit `passwords` file, add the desired user and revert permissions to default to prevent permissions conflicts.
 
 
 ## Home assistant (container)
 ### Install integrations (Configurations -> Devices and services -> add integrations)
 1. MQTT integration (used by tasmota)
 2. Tasmota integration
-3. Zigbee integration (if you have a compatible zigbee hub)
+3. Zigbee integration (if you have a compatible zigbee coordinator)
 
 
 ### Install HACS
-Install with this simgle command on a regular terminal
+Install with this single command on a regular terminal
 ```bash
 docker exec -it homeassistant sh -c "wget -O - https://get.hacs.xyz | bash -"
 ```
@@ -60,4 +60,35 @@ docker start homeassistant
 ```
 Go again to Configurations -> Devices and services -> add integrations. Hit <kbd>Ctrl</kbd> + <kbd>F5</kbd> to force reload without cache. This step is nedded to update integrations list and show HACS.
 
-UNDER CONSTRUCTION
+Install under the same menu this integrations:
+* MQTT
+* Tasmota
+
+
+### HACS (Home assistant) addons
+Go to HACS on left menu and install this addons:
+
+
+* WebRTC camera
+* apexcharts-card
+* auto-entities
+* layout-card
+* Advanced Camera Card
+
+
+### Zigbee 2 MQTT
+To add usb support on zigbee container (USB docker permission).\
+`sudo usermod -aG dialout $USER`
+
+
+To map the zigbee coodinator on  zigbee2mqtt\
+Get the USB device ID of the coordinator using this command and alter on file [compose/homeassistant.yaml](compose/homeassistant.yaml#L50)
+```bash
+ls -l /dev/serial/by-id/
+```
+
+Example of a coordinator ID
+```bash
+/dev/serial/by-id/usb-Silicon_Labs_CP2102_USB_to_UART_Bridge_Controller_0001-if00-port0
+```
+Ensure that is coordinator gets a fixed USB mapping, that persist no matter what USB port you use
